@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<meta title="Game Of Life" package="gameoflife" version="1.0.0" company="" />
+	<app main="Main" path="Export" file="gameoflife" />
+	
+	<source path="Source" />
+	
+	<haxelib name="openfl" />
+    <haxelib name="mmvc" />
+
+	<assets path="Assets" rename="assets" exclude="game_of_life_icon.svg" />
+	<icon path="Assets/game_of_life_icon.svg" />
+	
+</project>
