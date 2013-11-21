@@ -117,4 +117,22 @@ class GridTest
 
         Assert.isTrue(_instance.grid[1][1]);
     }
+
+    @Test
+    public function testTickShouldObeyOvercrowdingRule():Void
+    {
+        // Rule 3: Any live cell with more than three live
+        // neighbours dies, as if by overcrowding.
+
+        _instance.buildGrid(3, 3);
+        _instance.grid[0][1] = true;
+        _instance.grid[0][2] = true;
+        _instance.grid[1][0] = true;
+        _instance.grid[1][1] = true;
+        _instance.grid[1][2] = true;
+
+        _instance.tick();
+
+        Assert.isFalse(_instance.grid[1][1]);
+    }
 }

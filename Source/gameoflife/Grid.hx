@@ -47,6 +47,9 @@ class Grid
                 alive = !alive;
             }else if( neighbors == 2 || neighbors == 3 )
             {
+            }else if( neighbors > 3 )
+            {
+                alive = !alive;
             }
         }
         return alive;
