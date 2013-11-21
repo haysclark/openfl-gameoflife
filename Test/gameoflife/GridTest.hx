@@ -49,4 +49,21 @@ class GridTest
 
         Assert.isFalse(_instance.grid[1][1]);
     }
+
+    @Test
+    public function testTickShouldObeyNextGenerationRule():Void
+    {
+        // Rule 2: Any live cell with two or three live
+        // neighbours lives on to the next generation.
+
+        _instance.buildGrid(3, 3);
+        _instance.grid[0][1] = true;
+        _instance.grid[1][1] = true;
+        _instance.grid[2][1] = true;
+
+        _instance.tick();
+
+        Assert.isTrue(_instance.grid[1][1]);
+    }
+
 }
