@@ -25,6 +25,40 @@ class GridTest
     }
 
     @Test
+    public function testGetNumAliveNeighborsShouldBeZero():Void
+    {
+        _instance.buildGrid(3, 3);
+
+        Assert.areEqual( 0, _instance.getNumAliveNeighbors(1, 1) );
+    }
+
+    @Test
+    public function testGetNumAliveNeighborsShouldBeZeroForSelf():Void
+    {
+        _instance.buildGrid(3, 3);
+        _instance.grid[1][1] = true;
+
+        Assert.areEqual( 0, _instance.getNumAliveNeighbors(1, 1) );
+    }
+
+    @Test
+    public function testGetNumAliveNeighborsShouldWorkForAll():Void
+    {
+        _instance.buildGrid(3, 3);
+        _instance.grid[0][0] = true;
+        _instance.grid[1][0] = true;
+        _instance.grid[2][0] = true;
+        _instance.grid[0][1] = true;
+        _instance.grid[1][1] = true;
+        _instance.grid[2][1] = true;
+        _instance.grid[0][2] = true;
+        _instance.grid[1][2] = true;
+        _instance.grid[2][2] = true;
+
+        Assert.areEqual( 8, _instance.getNumAliveNeighbors(1, 1) );
+    }
+
+    @Test
     public function testBuildGridShouldSetCorrectSize():Void
     {
         var width:Int = 5;

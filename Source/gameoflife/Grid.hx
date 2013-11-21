@@ -52,6 +52,25 @@ class Grid
         return alive;
     }
 
+    public function getNumAliveNeighbors(x:Int, y:Int):Int
+    {
+        var neighbors:Int = 0;
+        for( col in x-1...x+2 )
+        {
+            for( row in y-1...y+2 )
+            {
+                if( (col == x && row == y) || !isValidLocation(col, row) || !grid[col][row] )
+                {
+                    continue;
+                }
+
+                neighbors++;
+            }
+        }
+
+        return neighbors;
+    }
+
     private function initArray(target:Array<Array<Bool>>, cellsWide:Int, cellHeight:Int):Void
     {
         var i = 0;
@@ -70,25 +89,6 @@ class Grid
             target.push(row);
             i++;
         }
-    }
-
-    private function getNumAliveNeighbors(x:Int, y:Int):Int
-    {
-        var neighbors:Int = 0;
-        for( col in x-1...x+2 )
-        {
-            for( row in y-1...y+2 )
-            {
-                if( (col == x && row == y) || !isValidLocation(col, row) || !grid[col][row] )
-                {
-                    continue;
-                }
-
-                neighbors++;
-            }
-        }
-
-        return neighbors;
     }
 
     private function isValidLocation(x:Int, y:Int):Bool
