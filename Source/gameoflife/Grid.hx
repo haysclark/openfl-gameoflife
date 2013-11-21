@@ -39,15 +39,21 @@ class Grid
     public function processCell(x:Int, y:Int):Bool
     {
         var alive:Bool = grid[x][y];
+        var neighbors:Int = getNumAliveNeighbors(x, y);
         if( alive )
         {
-            var neighbors:Int = getNumAliveNeighbors(x, y);
             if( neighbors < 2 )
             {
                 alive = !alive;
             }else if( neighbors == 2 || neighbors == 3 )
             {
             }else if( neighbors > 3 )
+            {
+                alive = !alive;
+            }
+        }else
+        {
+            if( neighbors == 3 )
             {
                 alive = !alive;
             }

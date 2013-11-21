@@ -135,4 +135,20 @@ class GridTest
 
         Assert.isFalse(_instance.grid[1][1]);
     }
+
+    @Test
+    public function testTickShouldObeyReproductionRule():Void
+    {
+        // Rule 4: Any dead cell with exactly three live
+        // neighbours becomes a live cell, as if by reproduction.
+
+        _instance.buildGrid(3, 3);
+        _instance.grid[0][1] = true;
+        _instance.grid[0][2] = true;
+        _instance.grid[1][0] = true;
+
+        _instance.tick();
+
+        Assert.isTrue(_instance.grid[1][1]);
+    }
 }
