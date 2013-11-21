@@ -37,10 +37,10 @@ class GridTest
     }
 
     @Test
-    public function testTickShouldTickShouldRespectUnderPopulationRule():Void
+    public function testTickShouldObeyUnderPopulationRule():Void
     {
-        //Rule: Any live cell with fewer than two live neighbours dies,
-        // as if caused by under-population.
+        // Rule 1: Any live cell with fewer than two live
+        // neighbours dies, as if caused by under-population.
 
         _instance.buildGrid(3, 3);
         _instance.grid[1][1] = true;
