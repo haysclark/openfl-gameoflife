@@ -82,21 +82,15 @@ class Grid
 
     private function initArray(target:Array<Array<Bool>>, cellsWide:Int, cellHeight:Int):Void
     {
-        var i = 0;
-
-        while (i < cellHeight)
+        for( i in 0...cellHeight)
         {
             var row = new Array<Bool>();
-            var j = 0;
-
-            while (j < cellsWide)
+            for( j in 0...cellsWide)
             {
                 row.push(false);
-                j++;
             }
 
             target.push(row);
-            i++;
         }
     }
 
