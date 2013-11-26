@@ -2,3 +2,6 @@
 .idea/
 *.iml
 Export/
+Test/ExampleTest.hx
+Test/TestMain.hx
+Test/TestSuite.hx
