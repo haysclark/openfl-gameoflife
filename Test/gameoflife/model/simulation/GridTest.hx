@@ -1,4 +1,4 @@
-package gameoflife;
+package gameoflife.model.simulation;
 
 import massive.munit.Assert;
 

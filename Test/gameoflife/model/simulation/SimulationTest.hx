@@ -1,4 +1,4 @@
-package gameoflife;
+package gameoflife.model.simulation;
 
 /**
  * Created by hclark on 11/22/13.
