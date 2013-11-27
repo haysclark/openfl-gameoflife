@@ -29,6 +29,8 @@
   <!-- haxelib libraries -->
   <haxelib>
     <library name="openfl" />
+    <library name="nme" />
+    <library name="actuate" />
   </haxelib>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>

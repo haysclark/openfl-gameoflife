@@ -1,5 +1,7 @@
 package core;
 
+import flash.display.DisplayObjectContainer;
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import msignal.Signal;
@@ -16,7 +18,7 @@ Each target has a platform specific element for accessing the raw display API (f
 
 @see msignal.Signal
 */
-class SpriteView
+class DisplayObjectView
 {
 	/**
 	Event type dispatched when view is added to stage
@@ -50,7 +52,7 @@ class SpriteView
 	@see SpriteView.addChild()
 	@see SpriteView.removeChild()
 	*/
-	public var parent(default, null):SpriteView;
+	public var parent(default, null):DisplayObjectView;
 
 	/**
 	reference to the index relative to siblings
@@ -66,17 +68,17 @@ class SpriteView
 		...
 		function viewHandler(event:String, view:View);
 	*/
-	public var signal(default, null):Signal2<String, SpriteView>;
+	public var signal(default, null):Signal2<String, DisplayObjectView>;
 
 	/**
 	native flash sprite representing this view in the display list
 	*/
-	public var sprite(default, null):Sprite;
+	public var sprite(default, null):DisplayObject;
 
 	/**
 	Contains all children currently added to view
 	*/
-	var children:Array<SpriteView>;
+	var children:Array<DisplayObjectView>;
 
 	/**
 	String representation of unqualified class name
@@ -95,7 +97,7 @@ class SpriteView
 		className = Type.getClassName(Type.getClass(this)).split(".").pop();
 		
 		children = [];
-		signal = new Signal2<String, SpriteView>();
+		signal = new Signal2<String, DisplayObjectView>();
 		
 		initialize();
 	}
@@ -110,7 +112,7 @@ class SpriteView
 	@param event 	string event type
 	@param view 	originating view object
 	*/
-	public function dispatch(event:String, view:SpriteView)
+	public function dispatch(event:String, view:DisplayObjectView)
 	{
 		if(view == null)
         {
@@ -126,15 +128,21 @@ class SpriteView
 
 	@param view 	child to add
 	*/
-	public function addChild(view:SpriteView)
+	public function addChild(view:DisplayObjectView)
 	{
+        if (!Std.is (sprite, DisplayObjectContainer)) {
+            //Parent is not a DisplayObjectContainer
+            return;
+        }
+
 		view.signal.add(this.dispatch);
 		view.parent = this;
 		view.index = children.length;
 
 		children.push(view);
 
-		sprite.addChild(view.sprite);
+        var doc = cast (sprite, DisplayObjectContainer);
+        doc.addChild(view.sprite);
 
 		dispatch(ADDED, view);
 	}
@@ -147,11 +155,10 @@ class SpriteView
 
 	@param view 	child to remove
 	*/
-	public function removeChild(view:SpriteView)
+	public function removeChild(view:DisplayObjectView)
 	{
 		var removed = children.remove(view);
-
-		if(removed)
+		if(removed && Std.is (sprite, DisplayObjectContainer))
 		{
 			var oldIndex = view.index;
 
@@ -160,7 +167,8 @@ class SpriteView
 			view.parent = null;
 			view.index = -1;
 
-			sprite.removeChild(view.sprite);
+            var doc = cast (sprite, DisplayObjectContainer);
+            doc.removeChild(view.sprite);
 
 			for(i in oldIndex...children.length)
 			{

@@ -6,6 +6,9 @@
  */
 package app;
 
+import gameoflife.view.simulation.SimulationOpenGLViewMediator;
+import gameoflife.view.simulation.SimulationOpenGLView;
+import gameoflife.model.simulation.SimulationModel;
 import mmvc.api.IViewContainer;
 
 class GameOfLifeContext extends mmvc.impl.Context
@@ -38,12 +41,12 @@ class GameOfLifeContext extends mmvc.impl.Context
 
     private function mapModels():Void
     {
-        //injector.mapSingleton(ModelClass);
+        injector.mapSingleton(SimulationModel);
     }
 
     private function mapViews():Void
     {
-        //mediatorMap.mapView(ViewClass, ViewClassMediator);
+        mediatorMap.mapView(SimulationOpenGLView, SimulationOpenGLViewMediator);
 
         // wiring for main application module
         mediatorMap.mapView(GameOfLifeView, GameOfLifeViewMediator);
