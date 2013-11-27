@@ -7,7 +7,7 @@ import massive.munit.Assert;
  */
 class GridTest
 {
-    public var _instance:Grid;
+    private var _instance:Grid;
 
     public function new()
     {}
@@ -25,130 +25,34 @@ class GridTest
     }
 
     @Test
-    public function testGetNumAliveNeighborsShouldBeZero():Void
-    {
-        _instance.buildGrid(3, 3);
-
-        Assert.areEqual( 0, _instance.getNumAliveNeighbors(1, 1) );
-    }
-
-    @Test
-    public function testGetNumAliveNeighborsShouldBeZeroForSelf():Void
-    {
-        _instance.buildGrid(3, 3);
-        _instance.grid[1][1] = true;
-
-        Assert.areEqual( 0, _instance.getNumAliveNeighbors(1, 1) );
-    }
-
-    @Test
-    public function testGetNumAliveNeighborsShouldWorkForAll():Void
-    {
-        _instance.buildGrid(3, 3);
-        _instance.grid[0][0] = true;
-        _instance.grid[1][0] = true;
-        _instance.grid[2][0] = true;
-        _instance.grid[0][1] = true;
-        _instance.grid[1][1] = true;
-        _instance.grid[2][1] = true;
-        _instance.grid[0][2] = true;
-        _instance.grid[1][2] = true;
-        _instance.grid[2][2] = true;
-
-        Assert.areEqual( 8, _instance.getNumAliveNeighbors(1, 1) );
-    }
-
-    @Test
-    public function testBuildGridShouldSetCorrectSize():Void
+    public function testInitShouldSetCorrectSize():Void
     {
         var width:Int = 5;
         var height:Int = 7;
 
-        _instance.buildGrid(5, 7);
+        _instance.init(width, height);
 
-        Assert.areEqual(width, _instance.grid[0].length);
-        Assert.areEqual(height, _instance.grid.length);
+        Assert.areEqual(width, _instance.cells[0].length);
+        Assert.areEqual(height, _instance.cells.length);
     }
 
     @Test
-    public function testTickShouldObeyUnderPopulationRule():Void
+    public function testIsValidLocationShouldReturnExpected():Void
     {
-        // Rule 1: Any live cell with fewer than two live
-        // neighbours dies, as if caused by under-population.
+        var width:Int = 3;
+        var height:Int = 3;
 
-        _instance.buildGrid(3, 3);
-        _instance.grid[1][1] = true;
+        _instance.init(width, height);
 
-        _instance.tick();
-
-        Assert.isFalse(_instance.grid[1][1]);
+        Assert.isFalse(_instance.isValidLocation( -1, -1 ));
+        Assert.isFalse(_instance.isValidLocation( 1, -1 ));
+        Assert.isFalse(_instance.isValidLocation( -1, 1 ));
+        Assert.isFalse(_instance.isValidLocation( 3, 1 ));
+        Assert.isFalse(_instance.isValidLocation( 1, 3 ));
+        Assert.isFalse(_instance.isValidLocation( 3, 3 ));
+        Assert.isTrue(_instance.isValidLocation( 0, 0 ));
+        Assert.isTrue(_instance.isValidLocation( 1, 1 ));
+        Assert.isTrue(_instance.isValidLocation( 2, 2 ));
     }
 
-    @Test
-    public function testTickShouldObeyNextGenerationRuleFor2():Void
-    {
-        // Rule 2: Any live cell with two or three live
-        // neighbours lives on to the next generation.
-
-        _instance.buildGrid(3, 3);
-        _instance.grid[0][1] = true;
-        _instance.grid[1][1] = true;
-        _instance.grid[2][1] = true;
-
-        _instance.tick();
-
-        Assert.isTrue(_instance.grid[1][1]);
-    }
-
-
-    @Test
-    public function testTickShouldObeyNextGenerationRuleFor3():Void
-    {
-        // Rule 2: Any live cell with two or three live
-        // neighbours lives on to the next generation.
-
-        _instance.buildGrid(3, 3);
-        _instance.grid[0][1] = true;
-        _instance.grid[1][1] = true;
-        _instance.grid[2][1] = true;
-        _instance.grid[1][0] = true;
-
-        _instance.tick();
-
-        Assert.isTrue(_instance.grid[1][1]);
-    }
-
-    @Test
-    public function testTickShouldObeyOvercrowdingRule():Void
-    {
-        // Rule 3: Any live cell with more than three live
-        // neighbours dies, as if by overcrowding.
-
-        _instance.buildGrid(3, 3);
-        _instance.grid[0][1] = true;
-        _instance.grid[0][2] = true;
-        _instance.grid[1][0] = true;
-        _instance.grid[1][1] = true;
-        _instance.grid[1][2] = true;
-
-        _instance.tick();
-
-        Assert.isFalse(_instance.grid[1][1]);
-    }
-
-    @Test
-    public function testTickShouldObeyReproductionRule():Void
-    {
-        // Rule 4: Any dead cell with exactly three live
-        // neighbours becomes a live cell, as if by reproduction.
-
-        _instance.buildGrid(3, 3);
-        _instance.grid[0][1] = true;
-        _instance.grid[0][2] = true;
-        _instance.grid[1][0] = true;
-
-        _instance.tick();
-
-        Assert.isTrue(_instance.grid[1][1]);
-    }
 }
