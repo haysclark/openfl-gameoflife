@@ -1,6 +1,7 @@
 package app;
 
-import core.SpriteView;
+import gameoflife.view.simulation.SimulationOpenGLView;
+import core.DisplayObjectView;
 
 /**
 Main Application View.
@@ -11,7 +12,7 @@ Extends core view class for basic event bubbling across platforms
 
 @see mmvc.api.IViewContainer
 */
-class GameOfLifeView extends SpriteView implements mmvc.api.IViewContainer
+class GameOfLifeView extends DisplayObjectView implements mmvc.api.IViewContainer
 {
 	public var viewAdded:Dynamic -> Void;
 	public var viewRemoved:Dynamic -> Void;
@@ -28,8 +29,8 @@ class GameOfLifeView extends SpriteView implements mmvc.api.IViewContainer
 	*/
 	public function createViews()
 	{
-		//var childView = new ChildView();
-		//addChild(childView);
+		var childView = new SimulationOpenGLView();
+		addChild(childView);
 	}
 
 	/**
@@ -37,15 +38,15 @@ class GameOfLifeView extends SpriteView implements mmvc.api.IViewContainer
 	@param event 	a string event type
 	@param view 	instance of view that originally dispatched the event
 	*/
-	override public function dispatch(event:String, view:SpriteView)
+	override public function dispatch(event:String, view:DisplayObjectView)
 	{
 		switch(event)
 		{
-			case SpriteView.ADDED:
+			case DisplayObjectView.ADDED:
 			{
 				viewAdded(view);
 			}
-			case SpriteView.REMOVED:
+			case DisplayObjectView.REMOVED:
 			{
 				viewRemoved(view);
 			}
@@ -62,13 +63,5 @@ class GameOfLifeView extends SpriteView implements mmvc.api.IViewContainer
 	public function isAdded(view:Dynamic):Bool
 	{
 		return true;
-	}
-
-	/**
-	Overrides View.initialize to add to top level platform specific sprite/element
-	*/
-	override function initialize()
-	{
-		super.initialize();
 	}
 }
