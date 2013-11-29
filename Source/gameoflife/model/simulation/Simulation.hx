@@ -5,6 +5,8 @@ package gameoflife.model.simulation;
  */
 class Simulation
 {
+    public var id:String;
+
     public var now:Grid;
     private var next:Grid;
 
