@@ -6,9 +6,9 @@
  */
 package app;
 
+import gameoflife.model.simulation.SimulationList;
 import gameoflife.view.simulation.SimulationOpenGLViewMediator;
 import gameoflife.view.simulation.SimulationOpenGLView;
-import gameoflife.model.simulation.SimulationModel;
 import mmvc.api.IViewContainer;
 
 class GameOfLifeContext extends mmvc.impl.Context
@@ -41,7 +41,7 @@ class GameOfLifeContext extends mmvc.impl.Context
 
     private function mapModels():Void
     {
-        injector.mapSingleton(SimulationModel);
+        injector.mapSingleton(SimulationList);
     }
 
     private function mapViews():Void
