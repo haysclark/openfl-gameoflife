@@ -34,12 +34,11 @@ OPEN_DIR=0
 APP_NAME=""
 ICONS_DIR=""
 BUILD_DIR=""
-EXPECTED_FLAGS="[-v] [-h] [-a] [-b builddir] [-i icondir] [-o outputfile]"
+ZIP_DSYM=0
+DSYM_DIR=""
+EXPECTED_FLAGS="[-v] [-h] [-a] [-z] [-d] [-b builddir] [-i icondir] [-o outputfile]"
 
-while getopts "vhab:i:o:" VALUE "$@" ; do
-	if [ "$VALUE" = "v" ] ; then
-		echo $NAME version $VERSION
-	fi
+while getopts "vhazb:i:o:d:" VALUE "$@" ; do
 	if [ "$VALUE" = "h" ] ; then
 		echo usage: $NAME $EXPECTED_FLAGS
 		echo
@@ -47,22 +46,33 @@ while getopts "vhab:i:o:" VALUE "$@" ; do
 		echo " -v            	   show version"
 		echo " -i            	   set dir of included files to be copied into IPA. ie icons"
 		echo " -a            	   auto-open the output folder on complete"
-		echo " -o            	   set the output name of IPA"
-		echo " -b            	   set location of ios build"
+		echo " -o            	   set the output name of IPA instead of build filename"
+		echo " -b            	   set location of ios build instead of default OpenFl dir"
+		echo " -z            	   zip dSYM file"
+		echo " -d            	   set source dSYM dir location instead of default dir"
 		echo "(-h)           	   show this help"
 		exit 0
+	fi
+	if [ "$VALUE" = "v" ] ; then
+		echo $NAME version $VERSION
+	fi
+	if [ "$VALUE" = "i" ] ; then
+		ICONS_DIR="$OPTARG"
 	fi
 	if [ "$VALUE" = "a" ] ; then
 		OPEN_DIR=1
 	fi
-	if [ "$VALUE" = "b" ] ; then
-		BUILD_DIR="$OPTARG"
-	fi
 	if [ "$VALUE" = "o" ] ; then
 		APP_NAME="$OPTARG"
 	fi
-	if [ "$VALUE" = "i" ] ; then
-		ICONS_DIR="$OPTARG"
+	if [ "$VALUE" = "b" ] ; then
+		BUILD_DIR="$OPTARG"
+	fi
+	if [ "$VALUE" = "z" ] ; then
+		ZIP_DSYM=1
+	fi
+	if [ "$VALUE" = "d" ] ; then
+		DSYM_DIR="$OPTARG"
 	fi
 	if [ "$VALUE" = ":" ] ; then
         echo "Flag -$OPTARG requires an argument."
@@ -119,6 +129,15 @@ fi
 
 zip -r --quiet $IPA_PATH Payload
 rm -rf Payload
+
+if [ "$ZIP_DSYM" = 1 ]; then
+	if [ "$DSYM_DIR" = "" ]; then
+		DSYM_DIR=$(find $BUILD_DIR -type f | grep -o '.*dSYM' | head -1)
+	fi
+	DSYM_BASENAME=$(basename $DSYM_DIR)
+	echo "Building "$DSYM_BASENAME.zip
+	zip -r --quiet $DSYM_BASENAME.zip $DSYM_DIR
+fi
 
 if [ "$OPEN_DIR" = 1 ]; then
 	open .
