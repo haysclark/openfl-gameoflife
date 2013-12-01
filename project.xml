@@ -10,6 +10,7 @@
     <haxelib name="mmvc" />
 
 	<assets path="Assets" rename="assets" exclude="game_of_life_icon.svg" />
+	
 	<icon path="Assets/game_of_life_icon.svg" />
 	
 </project>

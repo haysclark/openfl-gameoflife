@@ -22,41 +22,41 @@
 # 
 # Written by Hays Clark <hays@infinitedescent.com>
 # 
-# Latest version can be found at http://www.nixcraft.com/
+# Latest version can be found at https://gist.github.com/haysclark/
 # Tested on OSX (10.9)
 # 
 # Copyright (c) 2013 Hays Clark
 # 
 
-EXPORT_APP_PATH="Export/ios/build/Release-iphoneos/"
-if [ ! -d "$EXPORT_APP_PATH" ]; then
-	echo "Can not find iOS project. Try 'openfl build ios'"
-	exit 1;
-fi
-
+NAME="build_ipa"
 VERSION=1.0
 OPEN_DIR=0
-HAD_ARGS=0
 APP_NAME=""
 ICONS_DIR=""
-EXPECTED_FLAGS="[-v] [-h] [-f] [-i icondir] [-o outputfile]"
-while getopts "vhfi:o:" VALUE "$@" ; do
+BUILD_DIR=""
+EXPECTED_FLAGS="[-v] [-h] [-a] [-b builddir] [-i icondir] [-o outputfile]"
+
+while getopts "vhab:i:o:" VALUE "$@" ; do
 	if [ "$VALUE" = "v" ] ; then
-		echo Version $VERSION
-		exit 0
+		echo $NAME version $VERSION
 	fi
 	if [ "$VALUE" = "h" ] ; then
-		echo usage: build_ipa.sh $EXPECTED_FLAGS
+		echo usage: $NAME $EXPECTED_FLAGS
 		echo
 		echo "Options"
-		echo " -v               		show version"
-		echo " -i               		dir of files that will be copied into IPA such as icons"
-		echo " -o                 		force the output name of IPA"
-		echo "(-h)                 		show this help"
+		echo " -v            	   show version"
+		echo " -i            	   set dir of included files to be copied into IPA. ie icons"
+		echo " -a            	   auto-open the output folder on complete"
+		echo " -o            	   set the output name of IPA"
+		echo " -b            	   set location of ios build"
+		echo "(-h)           	   show this help"
 		exit 0
 	fi
-	if [ "$VALUE" = "f" ] ; then
+	if [ "$VALUE" = "a" ] ; then
 		OPEN_DIR=1
+	fi
+	if [ "$VALUE" = "b" ] ; then
+		BUILD_DIR="$OPTARG"
 	fi
 	if [ "$VALUE" = "o" ] ; then
 		APP_NAME="$OPTARG"
@@ -76,9 +76,19 @@ while getopts "vhfi:o:" VALUE "$@" ; do
 	fi
 done
 
+if [ "$BUILD_DIR" = "" ]; then
+	BUILD_DIR="Export/ios/build/Release-iphoneos/"
+fi
+
+if [ ! -d "$BUILD_DIR" ]; then
+	echo $BUILD_DIR" does not exist! Please build project or supply ios build directory."
+	echo " -try \"openfl build ios\" first"
+	exit 1;
+fi
+
 if [ "$APP_NAME" = "" ]; then
 	#is there a better way?
-	APP_FILE=$(find $EXPORT_APP_PATH -type f | grep -o '.*app' | head -1)
+	APP_FILE=$(find $BUILD_DIR -type f | grep -o '.*app' | head -1)
 	APP_BASENAME=$(basename $APP_FILE)
 	APP_NAME=${APP_BASENAME%.*}
 fi
@@ -86,7 +96,7 @@ fi
 IPA_PATH=$APP_NAME.ipa
 echo "Building "$IPA_PATH
 
-SEARCH=$EXPORT_APP_PATH*.app
+SEARCH=$BUILD_DIR*.app
 
 if [ -d "Payload" ]; then
 	echo " - removing existing export path: Payload"
@@ -98,8 +108,8 @@ APP_DIR=Payload/$APP_BASENAME/
 
 cp -rp $SEARCH Payload/
 
-if [ !"$ICONS_DIR" = "" ]; then
-	cp -a ios/. $APP_DIR
+if [ "$ICONS_DIR" != "" ]; then
+	cp -a $ICONS_DIR/. $APP_DIR
 
 	if [ -f $APP_DIR"iTunesArtwork.png" ]; then
 		echo " - removing .png suffix from iTunesArtwork"
@@ -110,6 +120,6 @@ fi
 zip -r --quiet $IPA_PATH Payload
 rm -rf Payload
 
-if [ $OPEN_DIR = 1 ]; then
+if [ "$OPEN_DIR" = 1 ]; then
 	open .
 fi
