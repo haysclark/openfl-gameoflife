@@ -34,25 +34,44 @@ if [ ! -d "$EXPORT_APP_PATH" ]; then
 	exit 1;
 fi
 
+VERSION=1.0
 OPEN_DIR=0
 HAD_ARGS=0
 APP_NAME=""
-
-while getopts "ao:" VALUE "$@" ; do
-	if [ "$VALUE" = "a" ] ; then
+ICONS_DIR=""
+EXPECTED_FLAGS="[-v] [-h] [-f] [-i icondir] [-o outputfile]"
+while getopts "vhfi:o:" VALUE "$@" ; do
+	if [ "$VALUE" = "v" ] ; then
+		echo Version $VERSION
+		exit 0
+	fi
+	if [ "$VALUE" = "h" ] ; then
+		echo usage: build_ipa.sh $EXPECTED_FLAGS
+		echo
+		echo "Options"
+		echo " -v               		show version"
+		echo " -i               		dir of files that will be copied into IPA such as icons"
+		echo " -o                 		force the output name of IPA"
+		echo "(-h)                 		show this help"
+		exit 0
+	fi
+	if [ "$VALUE" = "f" ] ; then
 		OPEN_DIR=1
 	fi
 	if [ "$VALUE" = "o" ] ; then
 		APP_NAME="$OPTARG"
 	fi
+	if [ "$VALUE" = "i" ] ; then
+		ICONS_DIR="$OPTARG"
+	fi
 	if [ "$VALUE" = ":" ] ; then
         echo "Flag -$OPTARG requires an argument."
-        echo "Usage: $0 [-a] [-o outputfile]"
+        echo "Usage: $0 $EXPECTED_FLAGS"
         exit 1
     fi
 	if [ "$VALUE" = "?" ] ; then
 		echo "Unknown flag -$OPTARG detected."
-		echo "Usage: $0 [-a] [-o outputfile]"
+		echo "Usage: $0 $EXPECTED_FLAGS"
 		exit 1
 	fi
 done
@@ -78,11 +97,14 @@ mkdir Payload
 APP_DIR=Payload/$APP_BASENAME/
 
 cp -rp $SEARCH Payload/
-cp -a ios/. $APP_DIR
 
-if [ -f $APP_DIR"iTunesArtwork.png" ]; then
-	echo " - removing .png suffix from iTunesArtwork"
-	mv $APP_DIR/iTunesArtwork.png $APP_DIR/iTunesArtwork
+if [ !"$ICONS_DIR" = "" ]; then
+	cp -a ios/. $APP_DIR
+
+	if [ -f $APP_DIR"iTunesArtwork.png" ]; then
+		echo " - removing .png suffix from iTunesArtwork"
+		mv $APP_DIR/iTunesArtwork.png $APP_DIR/iTunesArtwork
+	fi
 fi
 
 zip -r --quiet $IPA_PATH Payload
